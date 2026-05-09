@@ -1,4 +1,4 @@
-# Lab 9: Introduction to Kubernetes
+# Kubernetes
 
 ## Application
 
@@ -12,7 +12,7 @@ eval $(minikube docker-env)
 docker build -t moscow-time-app:lab9 ./app_python
 ```
 
-## Task 1: Kubernetes Setup and Basic Deployment
+## Kubernetes Setup and Basic Deployment
 
 ### Create Deployment imperatively
 
@@ -58,7 +58,7 @@ service "moscow-time-app" deleted from default namespace
 deployment.apps "moscow-time-app" deleted from default namespace
 ```
 
-## Task 2: Declarative Kubernetes Manifests
+## Declarative Kubernetes Manifests
 
 The declarative manifests are stored in this folder:
 
@@ -137,7 +137,7 @@ Browser page result:
 
 ![Browser result](images/browser-result.png)
 
-### Cleanup after Task 2
+### Cleanup after 
 
 ```bash
 kubectl delete -f k8s/service.yml
