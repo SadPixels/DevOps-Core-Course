@@ -1,9 +1,0 @@
----
-galaxy_info:
-  role_name: web_app
-  author: SadPixels
-  description: Deploys the Moscow Time Docker application container.
-  license: MIT
-  min_ansible_version: "2.9"
-
-dependencies: []

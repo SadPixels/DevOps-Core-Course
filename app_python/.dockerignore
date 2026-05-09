@@ -4,8 +4,3 @@ __pycache__/
 gunicorn.ctl
 .pytest_cache/
 .ruff_cache/
-tests/
-requirements-dev.txt
-CI.md
-PYTHON.md
-README.md

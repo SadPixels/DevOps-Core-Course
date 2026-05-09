@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: moscow-time-app
+  labels:
+    app: moscow-time-app
+spec:
+  type: NodePort
+  selector:
+    app: moscow-time-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080

@@ -1,8 +1,0 @@
----
-web_app_image: sadpixels/moscow-time-app:latest
-web_app_container_name: moscow-time-app
-web_app_host_port: 8080
-web_app_container_port: 8080
-web_app_restart_policy: unless-stopped
-web_app_recreate_container: true
-web_app_python_docker_package: python3-docker
