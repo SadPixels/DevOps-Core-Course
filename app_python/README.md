@@ -9,7 +9,7 @@ The application shows the current time in Moscow and stores the number of visits
 
 ## Run with Docker Compose
 
-From the repository root:
+From the `app_python` directory:
 
 ```bash
 docker compose up --build
@@ -26,7 +26,7 @@ http://localhost:8080
 Check the recorded counter on the host machine:
 
 ```bash
-cat app_python/visits
+cat visits
 ```
 
 Output:
@@ -35,7 +35,7 @@ Output:
 9
 ```
 
-Every request to `/` increases the number stored in `app_python/visits`. The file is mounted into the container as `/home/appuser/visits` by `docker-compose.yml`.
+Every request to `/` increases the number stored in `visits`. The file is mounted into the container as `/home/appuser/visits` by `docker-compose.yml`.
 
 Stop the container:
 
