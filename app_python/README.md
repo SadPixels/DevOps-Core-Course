@@ -9,9 +9,10 @@ The application shows the current time in Moscow and stores the number of visits
 
 ## Run with Docker Compose
 
-From the repository root:
+Go to the app directory:
 
 ```bash
+cd /app_python
 docker compose up --build
 ```
 
