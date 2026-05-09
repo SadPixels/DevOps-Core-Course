@@ -1,81 +1,67 @@
-# DevOps Engineering Labs
+# DevOps Core Course
 
-## Introduction
+## Lab 5: Ansible and Docker Deployment
 
-Welcome to the DevOps Engineering course labs! These hands-on labs are designed to guide you through various aspects of DevOps practices and principles. As you progress through the labs, you'll gain practical experience in application development, containerization, testing, infrastructure setup, CI/CD processes, and more.
+This repository contains the initial Ansible setup for Lab 5 Task 1.
 
-## Lab Syllabus
+### What is included
 
-1. Web Application Development
-2. Containerization
-3. Continuous Integration
-4. Infrastructure as Code & Terraform
-5. Configuration Management
-6. Ansible Automation
-7. Observability, Logging, Loki Stack
-8. Monitoring & Prometheus
-9. Kubernetes & Declarative Manifests
-10. Helm Charts & Library Charts
-11. Kubernetes Secrets Management (Vault, ConfigMaps)
-12. Kubernetes ConfigMaps & Environment Variables
-13. GitOps with ArgoCD
-14. StatefulSet Optimization
-15. Kubernetes Monitoring & Init Containers
-16. IPFS & Fleek Decentralization
+- Ansible project structure under `ansible/`.
+- Static inventory file for a development VM.
+- Development playbook for Docker deployment.
+- Local `docker` wrapper role that uses the existing `geerlingguy.docker` Ansible Galaxy role.
+- Placeholder `web_app` role structure for the recommended repository layout.
 
-## Architecture
+### Install Ansible
 
-This repository has a master branch containing an introduction. Each new lab assignment will be added as a markdown file with a lab number.
+On Ubuntu:
 
-## Rules
+```bash
+sudo apt update
+sudo apt install -y ansible
+ansible --version
+```
 
-To successfully complete the labs and pass the course, follow these rules:
+### Install the external Docker role
 
-1. **Lab Dependency:** Complete the labs in order; each lab builds upon the previous one.
-2. **Submission and Grading:** Submit your solutions as pull requests (PRs) to the master branch of this repository. You need at least 6/10 points for each lab to pass.
-3. **Fork Repository:** Fork this repository to your workspace to create your own version for solving the labs.
-4. **Recommended Workflow:** Build your solutions incrementally. Complete lab N based on lab N-1.
-5. **PR Creation:** Create a PR from your fork to the master branch of this repository and from your fork's branch to your fork's master branch.
-6. **Wait for Grade:** Once your PR is created, wait for your lab to be reviewed and graded.
+From the repository root:
 
-### Example for the first lab
+```bash
+cd ansible
+ansible-galaxy role install -r requirements.yml -p ~/.ansible/roles
+cd ..
+```
 
-1. Fork this repository.
-2. Checkout to the lab1 branch.
-3. Complete the lab1 tasks.
-4. Push the code to your repository.
-5. Create a PR to the master branch of this repository from your fork's lab1 branch.
-6. Create a PR to the master branch of your repository from your lab1 branch.
-7. Wait for your grade.
+### Configure inventory
 
-## Grading and Grades Distribution
+Edit `ansible/inventory/default_aws_ec2.yml` and replace these values with the development VM connection details:
 
-Your final grade will be determined based on labs and a final exam:
+```yaml
+ansible_host: <vm_public_ip>
+ansible_user: ubuntu
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+```
 
-- Labs: 70% of your final grade.
-- Final Exam: 30% of your final grade.
+### Validate inventory
 
-Grade ranges:
+Run Ansible commands from the `ansible` directory so that `ansible.cfg` is applied:
 
-- [90-100] - A
-- [75-90) - B
-- [60-75) - C
-- [0-60) - D
+```bash
+cd ansible
+ansible-inventory -i inventory/default_aws_ec2.yml --graph
+ansible-inventory -i inventory/default_aws_ec2.yml --list
+```
 
-### Labs Grading
+### Test the playbook
 
-Each lab is worth 10 points. Completing main tasks correctly earns you 10 points. Completing bonus tasks correctly adds 2.5 points. You can earn a maximum of 12.5 points per lab by completing all main and bonus tasks.
+Dry run:
 
-Finishing all bonus tasks lets you skip the exam and grants you 5 extra points. Incomplete bonus tasks require you to take the exam, which could save you from failing it.
+```bash
+ansible-playbook -i inventory/default_aws_ec2.yml playbooks/dev/main.yaml --check --diff
+```
 
->The labs account for 70% of your final grade. With 14 labs in total, each lab contributes 5% to your final grade. Completing all main tasks in a lab earns you the maximum 10 points, which corresponds to 5% of your final grade.
->If you successfully complete all bonus tasks, you'll earn an additional 2.5 points, totaling 12.5 points for that lab, or 6.25% of your final grade. Over the course of all 14 labs, the cumulative points from bonus tasks add up to 87.5% of your final grade.
->Additionally, a 5% bonus is granted for successfully finishing all bonus tasks, ensuring that if you successfully complete everything, your final grade will be 92.5%, which corresponds to an A grade.
+Apply changes:
 
-## Deadlines and Labs Distribution
-
-Each week, two new labs will be available. You'll have one week to submit your solutions. Refer to Moodle for presentation slides and deadlines.
-
-## Submission Policy
-
-Submitting your lab results on time is crucial for your grading. Late submissions receive a maximum score of 6 points for the corresponding lab. Remember, completing all labs is necessary to successfully pass the course.
+```bash
+ansible-playbook -i inventory/default_aws_ec2.yml playbooks/dev/main.yaml --diff
+```

@@ -1,0 +1,7 @@
+---
+- name: Install Docker using geerlingguy.docker role
+  ansible.builtin.include_role:
+    name: geerlingguy.docker
+  vars:
+    docker_install_compose_plugin: "{{ docker_role_install_compose_plugin }}"
+    docker_users: "{{ docker_role_users }}"

@@ -1,0 +1,5 @@
+---
+web_app_image: moscow-time-app:1.0.0
+web_app_container_name: moscow-time-app
+web_app_host_port: 8080
+web_app_container_port: 8080

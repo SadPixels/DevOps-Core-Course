@@ -1,0 +1,9 @@
+---
+- name: Check Docker Compose plugin version
+  ansible.builtin.command: docker compose version
+  register: docker_compose_version_check
+  changed_when: false
+  failed_when: docker_compose_version_check.rc != 0
+  when:
+    - docker_role_verify_compose | bool
+    - not ansible_check_mode

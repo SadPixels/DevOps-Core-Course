@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  role_name: web_app
+  author: SadPixels
+  description: Web application role placeholder for the recommended Lab 5 repository structure.
+  license: MIT
+  min_ansible_version: "2.9"
+
+dependencies: []

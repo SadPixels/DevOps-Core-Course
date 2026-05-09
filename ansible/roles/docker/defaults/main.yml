@@ -1,0 +1,5 @@
+---
+docker_role_install_compose_plugin: true
+docker_role_users:
+  - "{{ ansible_user }}"
+docker_role_verify_compose: true

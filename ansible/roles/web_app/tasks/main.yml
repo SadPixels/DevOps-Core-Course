@@ -1,0 +1,4 @@
+---
+- name: Keep web_app role ready for future application deployment
+  ansible.builtin.debug:
+    msg: "web_app role structure is prepared for later labs."
