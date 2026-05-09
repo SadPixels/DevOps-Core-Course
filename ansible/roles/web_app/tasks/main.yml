@@ -1,4 +1,21 @@
 ---
-- name: Keep web_app role ready for future application deployment
-  ansible.builtin.debug:
-    msg: "web_app role structure is prepared for later labs."
+- name: Ensure Docker SDK for Python is installed
+  ansible.builtin.apt:
+    name: "{{ web_app_python_docker_package }}"
+    state: present
+    update_cache: true
+
+- name: Pull application Docker image
+  community.docker.docker_image:
+    name: "{{ web_app_image }}"
+    source: pull
+
+- name: Start application container
+  community.docker.docker_container:
+    name: "{{ web_app_container_name }}"
+    image: "{{ web_app_image }}"
+    state: started
+    restart_policy: "{{ web_app_restart_policy }}"
+    recreate: "{{ web_app_recreate_container }}"
+    published_ports:
+      - "{{ web_app_host_port }}:{{ web_app_container_port }}"

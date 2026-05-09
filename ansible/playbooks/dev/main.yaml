@@ -1,8 +1,9 @@
 ---
-- name: Deploy Docker on development VM
+- name: Deploy Docker and web application on development VM
   hosts: dev
   become: true
   gather_facts: true
 
   roles:
     - role: docker
+    - role: web_app

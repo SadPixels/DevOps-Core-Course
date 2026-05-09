@@ -1,45 +1,40 @@
 # DevOps Core Course
 
-## Lab 5: Ansible and Docker Deployment
+## Lab 6: Ansible Application Deployment
 
-This repository contains the initial Ansible setup for Lab 5 Task 1.
+This repository contains the Ansible setup for Lab 6 Task 1.
 
 ### What is included
 
 - Ansible project structure under `ansible/`.
-- Static inventory file for a development VM.
-- Development playbook for Docker deployment.
-- Local `docker` wrapper role that uses the existing `geerlingguy.docker` Ansible Galaxy role.
-- Placeholder `web_app` role structure for the recommended repository layout.
+- Static inventory file for the development VM.
+- Custom `docker` Ansible role from Lab 5.
+- `web_app` role for application deployment.
+- Docker image pull task.
+- Docker container start task.
+- Development playbook that runs `docker` first and `web_app` second.
+- Ansible documentation in `ansible/ANSIBLE.md`.
 
-### Install Ansible
+### Install Ansible dependencies
 
-On Ubuntu:
-
-```bash
-sudo apt update
-sudo apt install -y ansible
-ansible --version
-```
-
-### Install the external Docker role
-
-From the repository root:
+Run from the `ansible` directory:
 
 ```bash
-cd ansible
-ansible-galaxy role install -r requirements.yml -p ~/.ansible/roles
-cd ..
+ansible-galaxy install -r requirements.yml
 ```
 
 ### Configure inventory
 
-Edit `ansible/inventory/default_aws_ec2.yml` and replace these values with the development VM connection details:
+The inventory is located at:
 
-```yaml
-ansible_host: <vm_public_ip>
-ansible_user: ubuntu
-ansible_ssh_private_key_file: ~/.ssh/id_rsa
+```text
+ansible/inventory/default_aws_ec2.yml
+```
+
+Current VM public IP:
+
+```text
+111.88.243.80
 ```
 
 ### Validate inventory
@@ -52,16 +47,14 @@ ansible-inventory -i inventory/default_aws_ec2.yml --graph
 ansible-inventory -i inventory/default_aws_ec2.yml --list
 ```
 
-### Test the playbook
-
-Dry run:
-
-```bash
-ansible-playbook -i inventory/default_aws_ec2.yml playbooks/dev/main.yaml --check --diff
-```
-
-Apply changes:
+### Deploy application
 
 ```bash
 ansible-playbook -i inventory/default_aws_ec2.yml playbooks/dev/main.yaml --diff
+```
+
+### Validate application
+
+```bash
+curl http://111.88.243.80:8080
 ```
