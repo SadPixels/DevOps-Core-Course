@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moscow-time-app
+  labels:
+    app: moscow-time-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: moscow-time-app
+  template:
+    metadata:
+      labels:
+        app: moscow-time-app
+    spec:
+      containers:
+        - name: moscow-time-app
+          image: moscow-time-app:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

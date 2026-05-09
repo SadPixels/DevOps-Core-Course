@@ -1,0 +1,7 @@
+The Moscow Time application has been installed.
+
+Check resources:
+  kubectl get pods,svc
+
+Open the application with Minikube:
+  minikube service {{ include "moscow-time-app.fullname" . }}
