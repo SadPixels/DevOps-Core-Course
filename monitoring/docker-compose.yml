@@ -44,12 +44,22 @@ services:
             isDefault: true
             version: 1
             editable: false
+          - name: Prometheus
+            type: prometheus
+            access: proxy
+            orgId: 1
+            url: http://prometheus:9090
+            basicAuth: false
+            isDefault: false
+            version: 1
+            editable: false
         EOF
         /run.sh
     ports:
       - "3000:3000"
     depends_on:
       - loki
+      - prometheus
     restart: unless-stopped
     networks:
       - lab7
@@ -57,10 +67,24 @@ services:
   web_app:
     build:
       context: ../app_python
-    image: moscow-time-app:lab7
+    image: moscow-time-app:lab8
     command: ["gunicorn", "-b", "0.0.0.0:8080", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
     ports:
       - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - lab7
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus-config.yaml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - loki
     restart: unless-stopped
     networks:
       - lab7
