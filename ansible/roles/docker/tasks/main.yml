@@ -1,6 +1,6 @@
 ---
-- name: Install Docker
+- name: Install Docker Engine
   ansible.builtin.import_tasks: install_docker.yml
 
-- name: Verify Docker Compose
+- name: Install Docker Compose
   ansible.builtin.import_tasks: install_compose.yml

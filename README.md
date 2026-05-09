@@ -2,14 +2,19 @@
 
 ## Lab 5: Ansible and Docker Deployment
 
-This repository contains the initial Ansible setup for Lab 5 Task 1.
+This repository contains the Ansible setup for Lab 5 Task 1 and Task 2.
 
 ### What is included
 
 - Ansible project structure under `ansible/`.
-- Static inventory file for a development VM.
+- Static inventory file for the development VM.
 - Development playbook for Docker deployment.
-- Local `docker` wrapper role that uses the existing `geerlingguy.docker` Ansible Galaxy role.
+- Custom `docker` Ansible role.
+- Docker Engine installation tasks.
+- Docker Compose plugin installation task.
+- Docker service enablement on boot.
+- Docker group configuration for the SSH user.
+- Ansible documentation in `ansible/ANSIBLE.md`.
 - Placeholder `web_app` role structure for the recommended repository layout.
 
 ### Install Ansible
@@ -22,24 +27,18 @@ sudo apt install -y ansible
 ansible --version
 ```
 
-### Install the external Docker role
-
-From the repository root:
-
-```bash
-cd ansible
-ansible-galaxy role install -r requirements.yml -p ~/.ansible/roles
-cd ..
-```
-
 ### Configure inventory
 
-Edit `ansible/inventory/default_aws_ec2.yml` and replace these values with the development VM connection details:
+The inventory is located at:
 
-```yaml
-ansible_host: <vm_public_ip>
-ansible_user: ubuntu
-ansible_ssh_private_key_file: ~/.ssh/id_rsa
+```text
+ansible/inventory/default_aws_ec2.yml
+```
+
+Current VM public IP:
+
+```text
+111.88.243.80
 ```
 
 ### Validate inventory
@@ -65,3 +64,7 @@ Apply changes:
 ```bash
 ansible-playbook -i inventory/default_aws_ec2.yml playbooks/dev/main.yaml --diff
 ```
+
+### Docker access without sudo
+
+The custom role adds the SSH user to the `docker` group. Reconnect over SSH after deployment before running Docker commands without `sudo`.

@@ -1,3 +1,4 @@
 ---
+# Task 1 reference/template role. The Task 2 playbook uses the local custom docker role.
 roles:
   - name: geerlingguy.docker
