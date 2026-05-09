@@ -61,6 +61,11 @@ def index():
     """
 
 
+@app.route("/healthz")
+def healthz():
+    return "ok\n", 200
+
+
 @app.route("/visits")
 def visits():
     return f"""

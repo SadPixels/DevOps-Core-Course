@@ -30,3 +30,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "moscow-time-app.secretName" -}}
 {{- printf "%s-secret" (include "moscow-time-app.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "moscow-time-app.headlessServiceName" -}}
+{{- printf "%s-headless" (include "moscow-time-app.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

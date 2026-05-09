@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 3
 
 image:
   repository: moscow-time-app
@@ -10,12 +10,40 @@ service:
   port: 8080
   nodePort: 30080
 
+headlessService:
+  port: 8080
+
 containerPort: 8080
 
 secret:
   enabled: true
   passwordKey: MY_PASS
   password: "moscow-time-secret"
+
+persistence:
+  enabled: true
+  mountPath: /data
+  visitsFile: /data/visits
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  storageClass: ""
+
+statefulset:
+  podManagementPolicy: Parallel
+
+probes:
+  readiness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
 
 resources:
   requests:

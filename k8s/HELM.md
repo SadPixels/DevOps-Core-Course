@@ -16,7 +16,7 @@ Helm chart:
 k8s/moscow-time-app/
 ```
 
-The chart creates a Kubernetes `Deployment` with three replicas, creates an `Opaque` Secret, sets CPU and memory requests/limits, and exposes the application through a `NodePort` Service.
+The chart creates a Kubernetes `StatefulSet`, a NodePort Service, a headless Service, an Opaque Secret, persistent volume claims for visit counters, and CPU/memory requests and limits.
 
 ## Chart values
 
@@ -35,23 +35,16 @@ service:
   port: 8080
   nodePort: 30080
 
-containerPort: 8080
+persistence:
+  mountPath: /data
+  visitsFile: /data/visits
+  size: 1Gi
 
-secret:
-  enabled: true
-  passwordKey: MY_PASS
-  password: "moscow-time-secret"
-
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 256Mi
+statefulset:
+  podManagementPolicy: Parallel
 ```
 
-The application listens on port `8080`, so the chart uses `8080` as the container port and service port.
+The application listens on port `8080`. The visit counter is written to `/data/visits`, which is mounted from a per-pod PVC.
 
 ## Build image for Minikube
 
@@ -70,66 +63,11 @@ The image tag used during build must be the same as the tag in `k8s/moscow-time-
 helm upgrade --install moscow-time-app ./k8s/moscow-time-app
 ```
 
-Expected output:
-
-```text
-Release "moscow-time-app" does not exist. Installing it now.
-NAME: moscow-time-app
-LAST DEPLOYED: Sat May  9 20:04:31 2026
-NAMESPACE: default
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
-The Moscow Time application has been installed.
-
-Check resources:
-  kubectl get pods,svc
-
-Open the application with Minikube:
-  minikube service moscow-time-app
-```
-
 ## Check deployed resources
 
-Wait until the deployment is ready:
-
 ```bash
-kubectl rollout status deployment/moscow-time-app
-```
-
-Check pods and services:
-
-```bash
-kubectl get pods,svc
-```
-
-Output:
-
-```text
-NAME                                   READY   STATUS    RESTARTS   AGE
-pod/moscow-time-app-5f7b7dfd9b-2gpnd   1/1     Running   0          35s
-pod/moscow-time-app-5f7b7dfd9b-7k9mt   1/1     Running   0          35s
-pod/moscow-time-app-5f7b7dfd9b-zx4pc   1/1     Running   0          35s
-
-NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
-service/kubernetes        ClusterIP   10.96.0.1        <none>        443/TCP          12m
-service/moscow-time-app   NodePort    10.110.120.181   <none>        8080:30080/TCP   35s
-```
-
-## Check the Secret
-
-```bash
-kubectl get secret moscow-time-app-secret
-kubectl exec moscow-time-app-5f7b7dfd9b-2gpnd -- printenv | grep MY_PASS
-```
-
-Output:
-
-```text
-NAME                     TYPE     DATA   AGE
-moscow-time-app-secret   Opaque   1      35s
-MY_PASS=moscow-time-secret
+kubectl rollout status statefulset/moscow-time-app
+kubectl get po,sts,svc,pvc
 ```
 
 ## Open the application
@@ -138,32 +76,23 @@ MY_PASS=moscow-time-secret
 minikube service moscow-time-app
 ```
 
-Output:
-
-```text
-|-----------|-----------------|-------------|---------------------------|
-| NAMESPACE |      NAME       | TARGET PORT |            URL            |
-|-----------|-----------------|-------------|---------------------------|
-| default   | moscow-time-app | http/8080   | http://192.168.49.2:30080 |
-|-----------|-----------------|-------------|---------------------------|
-Opening service default/moscow-time-app in default browser...
-```
-
-Application URL:
-
-```text
-http://192.168.49.2:30080
-```
-
-## Reinstall
+## Check persisted visits
 
 ```bash
-helm uninstall moscow-time-app
-helm upgrade --install moscow-time-app ./k8s/moscow-time-app
+kubectl exec pod/moscow-time-app-0 -- cat /data/visits
+kubectl exec pod/moscow-time-app-1 -- cat /data/visits
+kubectl exec pod/moscow-time-app-2 -- cat /data/visits
+```
+
+## Check StatefulSet DNS
+
+```bash
+kubectl exec pod/moscow-time-app-0 -- nslookup moscow-time-app-1.moscow-time-app-headless
 ```
 
 ## Uninstall
 
 ```bash
 helm uninstall moscow-time-app
+kubectl delete pvc -l app.kubernetes.io/name=moscow-time-app
 ```

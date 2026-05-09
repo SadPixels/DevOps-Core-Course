@@ -1,7 +1,12 @@
-The Moscow Time application has been installed.
+The Moscow Time application has been installed as a StatefulSet.
 
 Check resources:
-  kubectl get pods,svc
+  kubectl get po,sts,svc,pvc
 
 Open the application with Minikube:
   minikube service {{ include "moscow-time-app.fullname" . }}
+
+Check persisted visits in every pod:
+{{- range $i, $_ := until (int .Values.replicaCount) }}
+  kubectl exec pod/{{ include "moscow-time-app.fullname" $ }}-{{ $i }} -- cat {{ $.Values.persistence.visitsFile }}
+{{- end }}
